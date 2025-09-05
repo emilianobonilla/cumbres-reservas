@@ -1,0 +1,53 @@
+# FastAPI Core
+fastapi==0.104.*
+uvicorn[standard]==0.24.*
+python-multipart==0.0.6
+
+# Database
+sqlalchemy==2.0.*
+alembic==1.12.*
+psycopg2-binary==2.9.*
+
+# Data validation and settings
+pydantic==2.4.*
+pydantic-settings==2.0.*
+
+# Authentication
+python-jose[cryptography]==3.3.*
+passlib[bcrypt]==1.7.*
+
+# HTTP client
+httpx==0.25.*
+
+# Date utilities
+python-dateutil==2.8.*
+
+# Environment variables
+python-decouple==3.8
+
+# Email
+aiosmtplib==3.0.*
+jinja2==3.1.*
+
+# Background tasks
+apscheduler==3.10.*
+
+# Redis cache
+redis==5.0.*
+
+# Logging
+structlog==23.2.*
+
+# Development dependencies
+pytest==7.4.*
+pytest-asyncio==0.21.*
+pytest-cov==4.1.*
+black==23.9.*
+isort==5.12.*
+flake8==6.1.*
+pre-commit==3.5.*
+
+# Azure specific
+azure-functions==1.18.*
+azure-storage-blob==12.19.*
+azure-communication-email==1.0.*
