@@ -1,197 +1,244 @@
 # Sistema de Reservas - Salón de Eventos
 
 ## Objetivo del Proyecto
-Desarrollar una aplicación web responsiva para la gestión de reservas de un salón de eventos, optimizada para dispositivos móviles.
+Aplicación web full-stack para la gestión de reservas de un salón de eventos, optimizada para dispositivos móviles con arquitectura moderna.
 
-## Alcance del Proyecto
-- Sistema de reservas online
-- Gestión de disponibilidad del salón
-- Panel administrativo para el propietario
-- Interfaz móvil-first para clientes
-- Notificaciones automáticas
-- Reportes básicos
+## Stack Tecnológico Definitivo
 
-## Stack Tecnológico Propuesto
+### Full-Stack Framework
+- **Framework**: Next.js 14 con App Router
+- **Lenguaje**: TypeScript 5
+- **Styling**: Tailwind CSS 4 (móvil-first)
+- **Componentes**: shadcn/ui + Radix UI
 
-### Frontend
-- **Framework**: React 18 con TypeScript
-- **Styling**: Tailwind CSS (móvil-first)
-- **Estado**: Zustand o React Query
-- **Build**: Vite
-- **PWA**: Workbox para funcionalidad offline
+### Estado y Datos
+- **Estado Global**: Zustand
+- **Server State**: TanStack Query (React Query)
+- **Forms**: React Hook Form + Zod
+- **ORM**: Drizzle ORM + Drizzle Kit
 
-### Backend
-- **Runtime**: Python 3.12
-- **Framework**: FastAPI
-- **ORM**: SQLAlchemy 2.0
-- **Validación**: Pydantic v2
-- **Autenticación**: JWT + OAuth2
+### Base de Datos y Auth
+- **Base de datos**: PostgreSQL (Supabase)
+- **Autenticación**: Supabase Auth (admin) + Custom PIN (clientes)
+- **Storage**: Supabase Storage
 
-### Base de Datos
-- **Principal**: PostgreSQL (Azure Database)
-- **Cache**: Redis (Azure Cache)
+### Infraestructura (Vercel)
+- **Hosting**: Vercel (Frontend + API Routes)
+- **Base de datos**: Supabase PostgreSQL
+- **CDN**: Vercel Edge Network
+- **Analytics**: Vercel Analytics
+- **CI/CD**: GitHub Actions + Vercel
 
-### Infraestructura (Azure)
-- **Backend**: Azure Functions (Python 3.12)
-- **Frontend**: Azure Static Web Apps
-- **Base de datos**: Azure Database for PostgreSQL
-- **Cache**: Azure Cache for Redis
-- **Storage**: Azure Blob Storage (imágenes)
-- **Monitoring**: Azure Application Insights
+### Testing
+- **Unit Tests**: Vitest + React Testing Library
+- **Mocking**: Vitest native mocks
 
-### DevOps
-- **CI/CD**: GitHub Actions
-- **Containerización**: Docker
-- **Monitoreo**: Azure Monitor
+## Flujo de Desarrollo Multi-Ambiente
 
-## Actores del Sistema
+### 🏗️ Arquitectura de Branches
+```
+feature/nueva-funcionalidad → develop → staging (Vercel)
+                               ↓
+                            main → production (Vercel)
+```
 
-### Cliente
-- Consultar disponibilidad
-- Realizar reservas
-- Modificar/cancelar reservas propias
-- Recibir confirmaciones por email/SMS
+### 🐳 Desarrollo Local con Docker (Recomendado)
+```bash
+# Setup inicial
+make help                      # Ver todos los comandos
+make install                   # Instalar dependencias
+cp .env.example .env.local     # Configurar variables de entorno
 
-### Administrador
-- Gestionar todas las reservas
-- Configurar disponibilidad y precios
-- Ver reportes y estadísticas
-- Gestionar clientes y eventos
+# Desarrollo con hot reload
+make dev-docker                # Inicia todos los servicios (Next.js + PostgreSQL)
+# Acceder a http://localhost:3000
+
+# Comandos útiles
+make logs                      # Ver logs de la aplicación
+make db-shell                  # Conectar a PostgreSQL
+make shell                     # Abrir terminal en el contenedor
+make stop                      # Parar todos los servicios
+```
+
+### 💻 Desarrollo Local Sin Docker
+```bash
+# Servidor de desarrollo
+npm run dev                    # http://localhost:3000
+
+# Base de datos (requiere PostgreSQL local)
+npm run db:push               # Push schema a DB
+npm run db:studio             # Drizzle Studio
+```
+
+### 🚀 Comandos de Desarrollo
+
+#### Testing
+```bash
+npm run test                  # Unit tests
+npm run test:watch            # Tests en modo watch
+npm run test:coverage         # Coverage report
+```
+
+#### Calidad de Código
+```bash
+npm run lint                  # ESLint
+npm run lint:fix              # Fix automático
+npm run type-check            # TypeScript check
+```
+
+#### Base de Datos
+```bash
+npm run db:generate           # Generar migraciones
+npm run db:migrate            # Aplicar migraciones
+npm run db:push               # Push schema a DB
+npm run db:studio             # Drizzle Studio
+```
+
+## Características Únicas del Proyecto
+
+### PIN-based Access
+- **Clientes**: Acceden con código único (sin registro)
+- **Administradores**: Login tradicional con Supabase Auth
+
+### Mobile-First
+- Diseño optimizado para dispositivos móviles
+- PWA ready con offline capabilities
+- Touch-friendly interfaces
+
+### Multi-Ambiente
+- **Development**: Docker local con hot reload
+- **Staging**: Deploy automático desde `develop` branch
+- **Production**: Deploy automático desde `main` branch
 
 ## Casos de Uso Principales
 
 ### Para Clientes
-1. **Consultar Disponibilidad**
-   - Ver calendario de disponibilidad
-   - Filtrar por fecha y horario
-   - Ver precios por tipo de evento
+1. **Acceso por PIN**: Ingresan código único para ver su reserva
+2. **Ver Detalles**: Fecha, hora, tipo de evento, información de contacto
+3. **Recibir Notificaciones**: SMS/WhatsApp con recordatorios
 
-2. **Realizar Reserva**
-   - Seleccionar fecha y horario
-   - Completar datos del evento
-   - Realizar pago/señar
-   - Recibir confirmación
+### Para Administradores
+1. **Gestión de Reservas**: CRUD completo de reservas
+2. **Gestión de Clientes**: Base de datos de clientes
+3. **Calendario**: Vista de disponibilidad y reservas
+4. **Configuración**: Precios, horarios, días no laborables
+5. **Reportes**: Ingresos, ocupación, estadísticas
+6. **Pagos**: Registro de señas y pagos completados
 
-3. **Gestionar Reservas**
-   - Ver mis reservas
-   - Modificar reserva (dentro del plazo permitido)
-   - Cancelar reserva
-   - Descargar comprobante
+## Workflow de Desarrollo
 
-### Para Administrador
-1. **Gestión de Reservas**
-   - Ver todas las reservas
-   - Aprobar/rechazar reservas
-   - Modificar cualquier reserva
-   - Gestionar lista de espera
+### 1. Crear Feature Branch
+```bash
+make feature name=nueva-funcionalidad
+# Crea feature/nueva-funcionalidad desde develop
+```
 
-2. **Configuración del Sistema**
-   - Configurar horarios disponibles
-   - Establecer precios y promociones
-   - Configurar políticas de cancelación
-   - Gestionar días no laborables
+### 2. Desarrollo Local
+```bash
+make dev-docker                # Desarrollo con Docker
+# o
+npm run dev                    # Desarrollo sin Docker
+```
 
-3. **Reportes y Estadísticas**
-   - Ingresos por período
-   - Ocupación del salón
-   - Clientes frecuentes
-   - Análisis de demanda
+### 3. Testing y Quality Checks
+```bash
+make ci-test                   # Suite completa de CI
+# Ejecuta: type-check, lint, test, build
+```
 
-## Funcionalidades Técnicas
+### 4. Pull Request
+```bash
+git push origin feature/nueva-funcionalidad
+# Crear PR hacia develop en GitHub
+```
 
-### Autenticación y Autorización
-- Registro de usuarios con email
-- Login con email/password
-- Reset de contraseña
-- Roles: Cliente, Administrador
+### 5. Deploy Automático
+- **Merge to develop** → Deploy automático a **staging**
+- **Merge to main** → Deploy automático a **production**
 
-### Notificaciones
-- Email de confirmación de reserva
-- Recordatorios de evento
-- Notificaciones de cambios
-- Notificaciones push (PWA)
+## Variables de Entorno
 
-### Pagos (Fase 2)
-- Integración con Mercado Pago
-- Gestión de señas y pagos completos
-- Facturación electrónica
+Ver `.env.example` para configuración completa. Variables críticas:
+
+### Development
+- `NEXT_PUBLIC_SUPABASE_URL_DEV`: URL de Supabase desarrollo
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY_DEV`: Clave anónima desarrollo
+- `DATABASE_URL`: PostgreSQL local (Docker)
+
+### Staging
+- `NEXT_PUBLIC_SUPABASE_URL_STAGING`: URL de Supabase staging
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY_STAGING`: Clave anónima staging
+
+### Production
+- `NEXT_PUBLIC_SUPABASE_URL_PROD`: URL de Supabase producción
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY_PROD`: Clave anónima producción
 
 ## Estructura del Proyecto
 
 ```
-cumbres-app/
-├── frontend/                 # React app
-│   ├── src/
-│   ├── public/
-│   ├── package.json
-│   └── vite.config.ts
-├── backend/                  # FastAPI app
-│   ├── app/
-│   │   ├── api/
-│   │   ├── core/
-│   │   ├── db/
-│   │   ├── models/
-│   │   └── services/
-│   ├── requirements.txt
-│   └── Dockerfile
-├── infrastructure/           # Azure deployment
-│   ├── terraform/
-│   └── github-actions/
-├── docs/                    # Documentación
-├── tests/                   # Tests E2E
-└── README.md
+src/
+├── app/                    # Next.js App Router
+│   ├── admin/             # Panel administrativo
+│   ├── reserva/[pin]/     # Vista cliente por PIN
+│   └── api/               # API Routes
+├── components/            # Componentes reutilizables
+│   ├── ui/               # shadcn/ui components
+│   ├── layout/           # Layouts
+│   ├── forms/            # Formularios
+│   └── admin/            # Componentes admin
+├── lib/                   # Librerías y utilidades
+│   ├── db/               # Database schema
+│   ├── auth/             # Auth helpers
+│   └── validations/      # Zod schemas
+├── types/                 # TypeScript types
+├── hooks/                 # Custom hooks
+└── stores/                # Zustand stores
 ```
+
+## Deployment en Vercel
+
+### Setup Inicial
+1. **Conectar GitHub**: Importar repositorio a Vercel
+2. **Configurar Ambientes**: Crear proyectos separados para staging/production
+3. **Variables de Entorno**: Configurar en Vercel Dashboard por ambiente
+4. **Deploy Automático**: Push a develop/main = deploy automático
+
+### Branch Configuration
+- **develop** → Proyecto Vercel "cumbres-reservas-staging"
+- **main** → Proyecto Vercel "cumbres-reservas"
 
 ## Próximos Pasos
 
-1. ✅ Crear documento de planificación
-2. 🔄 Definir casos de uso detallados
-3. ⏳ Especificar stack tecnológico final
-4. ⏳ Crear backlog de tareas atómicas
-5. ⏳ Configurar estructura inicial
+1. ✅ **Setup multi-ambiente completado**
+2. 🔄 **Configurar Supabase proyectos (dev/staging/prod)**
+3. ⏳ **Crear schema de base de datos**
+4. ⏳ **Implementar componentes base**
+5. ⏳ **Desarrollar autenticación**
+6. ⏳ **Crear funcionalidades core**
+
+## Comandos Útiles
+
+```bash
+# Desarrollo
+make dev-docker            # Desarrollo con Docker
+make dev                   # Desarrollo sin Docker
+make help                  # Ver todos los comandos
+
+# Testing
+make test                  # Unit tests
+make ci-test              # Suite completa CI
+
+# Base de datos
+make db-shell             # Conectar a PostgreSQL
+make db-migrate           # Aplicar migraciones
+
+# Docker
+make clean                # Limpiar contenedores
+make reset                # Reset completo
+```
 
 ---
 
-## Backlog de Desarrollo
-
-### Fase 1: Configuración Base
-- [ ] Setup del entorno de desarrollo
-- [ ] Configuración de Python 3.12 virtual env
-- [ ] Setup inicial de FastAPI
-- [ ] Setup inicial de React + Vite
-- [ ] Configuración de base de datos local
-
-### Fase 2: Autenticación
-- [ ] Modelo de usuarios
-- [ ] Endpoints de autenticación
-- [ ] Frontend de login/registro
-- [ ] Middleware de autorización
-
-### Fase 3: Core Business Logic
-- [ ] Modelo de reservas
-- [ ] Calendario de disponibilidad
-- [ ] API de reservas
-- [ ] Frontend de reservas
-
-### Fase 4: Panel Administrativo
-- [ ] Dashboard de administración
-- [ ] Gestión de reservas
-- [ ] Configuraciones del sistema
-- [ ] Reportes básicos
-
-### Fase 5: Features Avanzadas
-- [ ] Notificaciones por email
-- [ ] PWA functionality
-- [ ] Sistema de pagos
-- [ ] Optimizaciones de performance
-
-### Fase 6: Deployment
-- [ ] Configuración de Azure
-- [ ] CI/CD con GitHub Actions
-- [ ] Monitoring y logging
-- [ ] Testing en producción
-
----
-
-*Documento creado el 04/09/2024*
-*Stack: Python 3.12, FastAPI, React, PostgreSQL, Azure*
+*Proyecto creado con Next.js 14 + TypeScript*  
+*Stack: Next.js, Supabase, Vercel, Drizzle ORM*  
+*Arquitectura: Multi-ambiente con Docker + CI/CD*
